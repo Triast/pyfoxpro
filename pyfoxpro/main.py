@@ -1,0 +1,325 @@
+import dbf
+import re
+import subprocess
+import tempfile
+import typer
+from pathlib import Path
+from typing import List
+from pyfoxpro.foxpro import replacement_table, properties_to_remove
+
+
+app = typer.Typer()
+
+
+@app.command()
+def beautify(file: str):
+    file_path = Path(file)
+
+    if not file_path.exists() \
+            or file_path.is_dir() \
+            or not (file_path.suffix.lower() == ".scx"
+                    or file_path.suffix.lower() == ".sc2"
+                    or file_path.suffix.lower() == ".prg"):
+        return
+
+    if file_path.suffix.lower() == ".prg":
+        with file_path.open("r", newline="\r\n") as f:
+            beautified_code_lines = beautify_code(f.read(), False)
+
+        with file_path.open("w", newline="\r\n") as f:
+            f.write("\n".join(beautified_code_lines))
+
+        return
+
+    if file_path.suffix.lower() == ".sc2":
+        file_path = file_path.with_suffix(".scx")
+
+    form_memo: Path = file_path.with_suffix(".sct")
+    temp_form_memo = form_memo.rename(form_memo.with_suffix(".fpt"))
+
+    table = dbf.Table(
+        filename=str(file_path)
+    )
+
+    table.open(dbf.READ_WRITE)
+
+    for record in table:
+        if record.baseclass in properties_to_remove:
+            properties_splited: str = record.properties.splitlines(keepends=True)
+            clean_properties: List[str] = []
+
+            for prop in properties_splited:
+                good_prop = True
+
+                if "ControlSource" in prop or "DynamicBackColor" in prop or "DynamicForeColor" in prop:
+                    if '= "' in prop:
+                        content_regex = re.compile(r'".*"')
+                    elif "= '" in prop:
+                        content_regex = re.compile(r"'.*'")
+                    else:
+                        content_regex = re.compile(r"\[.*]")
+
+                    search_result = content_regex.search(prop)
+
+                    corrected_prop = beautify_code(search_result.group(0)[1:-1], False)[0]
+
+                    if '"' in corrected_prop and "'" in corrected_prop:
+                        replacement_prop = f"[{corrected_prop}]"
+                    elif '"' in corrected_prop:
+                        replacement_prop = f"'{corrected_prop}'"
+                    else:
+                        replacement_prop = f'"{corrected_prop}"'
+
+                    prop = content_regex.sub(replacement_prop, prop)
+
+                for prop_to_remove in properties_to_remove[record.baseclass]:
+                    if prop_to_remove.search(prop):
+                        good_prop = False
+                        break
+
+                if good_prop:
+                    if "= (" in prop:
+                        corrected_prop = beautify_code(re.search(r'\(.*\)', prop).group(0)[1:-1], False)[0]
+                        prop = re.sub(r'\(.*\)', f'({corrected_prop})', prop)
+
+                    clean_properties.append(prop)
+
+            dbf.write(record, properties="".join(clean_properties))
+
+        if record.methods:
+            beatified_code = beautify_code(record.methods, True)
+            dbf.write(record, methods="\r\n".join(beatified_code))
+
+    table.close()
+
+    temp_form_memo.rename(form_memo)
+
+    foxpro_compile_command_file: Path = Path(tempfile.gettempdir() + "\\compile_file.prg")
+    foxpro_compile_command_file_fxp: Path = foxpro_compile_command_file.with_suffix(".fxp")
+    with foxpro_compile_command_file.open(mode="w") as f:
+        f.write("COMPILE FORM " + str(file_path) + "\nQUIT\n")
+
+    subprocess.run(["vfp9", "-c", str(foxpro_compile_command_file)])
+
+    foxpro_compile_command_file.unlink()
+    foxpro_compile_command_file_fxp.unlink()
+
+    subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"])
+
+
+def convert_iif_isnull_to_nvl(match) -> str:
+    return f"NVL({match.group(1)}, {match.group(2)})"
+
+
+def beautify_code(code: str, is_form: bool) -> List[str]:
+    lines: List[str] = code.split(sep="\r\n")
+    corrected_lines: List[str] = []
+    indentation_level = 0
+
+    operator_to_insert = ""
+
+    continuation_line = False
+
+    binary_operator_on_two_lines = False
+
+    for line in lines:
+        line_stripped: str = line.strip()
+
+        if line_stripped.startswith("PROCEDURE") and is_form:
+            corrected_lines.append(line_stripped)
+            continue
+
+        if not line_stripped:
+            corrected_lines.append(line_stripped)
+            continue
+
+        if line_stripped.startswith("&&"):
+            line_stripped = line_stripped.replace("&&", "*", 1)
+
+        if line_stripped.startswith("*"):
+            corrected_lines.append("\t" * indentation_level + line_stripped)
+            continue
+
+        if line_stripped.upper().startswith("ELSE"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("ENDIF"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("ENDSCAN"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("CASE"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("OTHER"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("ENDCASE"):
+            indentation_level -= 2
+        if line_stripped.upper().startswith("ENDFOR"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("NEXT"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("ENDDO"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("CATCH"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("ENDTRY"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("ENDWITH"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("ENDFUNC"):
+            indentation_level -= 1
+        if line_stripped.upper().startswith("ENDPROC") and not is_form:
+            indentation_level -= 1
+
+        comment_start = line_stripped.find("&&")
+        comment = ""
+        if comment_start != -1:
+            comment = re.sub(r"&&\s*", "&& ", line_stripped[comment_start:])
+            line_stripped = line_stripped[:comment_start].rstrip()
+
+        matches = [match for match in re.split(r"('[^']*')|('[^']*$)|(\"[^\"]*\")|(\"[^\"]*$)", line_stripped)
+                   if match is not None]
+
+        corrected_line = ""
+        for i, match in enumerate(matches):
+            comment_match = False
+            match_raw = match
+
+            if match_raw.startswith('"'):
+                if match_raw.find("'") == -1:
+                    match_raw = match_raw.replace('"', "'")
+                comment_match = True
+            if match.startswith("'"):
+                comment_match = True
+
+            if comment_match:
+                comment_content = match_raw[1:-1]
+                if comment_content.isspace() and len(comment_content) > 1:
+                    match_raw = f"SPACE({len(comment_content)})"
+                corrected_line = corrected_line + match_raw
+                continue
+
+            for replacement in replacement_table:
+                match_raw = replacement[0].sub(replacement[1], match_raw)
+
+            match_raw = re.sub(r"\s*=\s*", " = ", match_raw)
+            match_raw = re.sub(r"^\s*=\s*", "= ", match_raw)
+            match_raw = re.sub(r"\s*<\s*", " < ", match_raw)
+            match_raw = re.sub(r"^\s*<\s*", "< ", match_raw)
+            match_raw = re.sub(r"\s*>\s*", " > ", match_raw)
+            match_raw = re.sub(r"^\s*>\s*", "> ", match_raw)
+            match_raw = re.sub(r"\s*=\s*=\s*", " == ", match_raw)
+            match_raw = re.sub(r"^\s*=\s*=\s*", "== ", match_raw)
+            match_raw = re.sub(r"\s*<\s*=\s*", " <= ", match_raw)
+            match_raw = re.sub(r"^\s*<\s*=\s*", "<= ", match_raw)
+            match_raw = re.sub(r"\s*>\s*=\s*", " >= ", match_raw)
+            match_raw = re.sub(r"^\s*>\s*=\s*", ">= ", match_raw)
+            match_raw = re.sub(r"\s*=\s*>\s*", " >= ", match_raw)
+            match_raw = re.sub(r"^\s*=\s*>\s*", ">= ", match_raw)
+            match_raw = re.sub(r"\s*<\s*>\s*", " <> ", match_raw)
+            match_raw = re.sub(r"^\s*<\s*>\s*", "<> ", match_raw)
+            match_raw = re.sub(r"\s*!\s*=\s*", " <> ", match_raw)
+            match_raw = re.sub(r"^\s*!\s*=\s*", "<> ", match_raw)
+
+            match_raw = re.sub(r"(?<=[\w)\]'\"])(?<!WITH)(?<!STEP)(?<!SKIP)\s*\+\s*", " + ", match_raw)
+            match_raw = re.sub(r"^\s*\+\s*", ("+ " if i == 0 else " + ") if not continuation_line or not (
+                        not binary_operator_on_two_lines and i == 0) else "+", match_raw)
+            match_raw = re.sub(r"(?<=[\w)\]'\"])(?<!WITH)(?<!STEP)(?<!SKIP)\s*-\s*", " - ", match_raw)
+            match_raw = re.sub(r"^\s*-\s*", ("- " if i == 0 else " - ") if not continuation_line or not (
+                        not binary_operator_on_two_lines and i == 0) else "-", match_raw)
+            if "LIKE" not in match_raw:
+                match_raw = re.sub(r"\s*\*\s*", " * ", match_raw)
+                match_raw = re.sub(r"^\s*\*\s*", ("* " if i == 0 else " * ") if not continuation_line or not (
+                            not binary_operator_on_two_lines and i == 0) else "*", match_raw)
+                match_raw = re.sub(r"\s*\*\s*\*\s*", " ** ", match_raw)
+                match_raw = re.sub(r"^\s*\*\s*\*\s*", ("** " if i == 0 else " ** ") if not continuation_line or not (
+                            not binary_operator_on_two_lines and i == 0) else "**", match_raw)
+            match_raw = re.sub(r"\s*/\s*", " / ", match_raw)
+            match_raw = re.sub(r"^\s*/\s*", ("/ " if i == 0 else " / ") if not continuation_line or not (
+                        not binary_operator_on_two_lines and i == 0) else "/", match_raw)
+            match_raw = re.sub(r"\s*,\s*", ", ", match_raw)
+            match_raw = re.sub(r"\s*;", " ;", match_raw)
+            match_raw = re.sub(r"\(\s+", "(", match_raw)
+            match_raw = re.sub(r"\s+\)", ")", match_raw)
+            match_raw = re.sub(r"\s+", " ", match_raw)
+            match_raw = re.sub(r"(\d{4})\s*-\s*(\d{2})\s*-\s*(\d{2})",
+                               lambda match: f"{match.group(1)}-{match.group(2)}-{match.group(3)}", match_raw)
+            match_raw = re.sub(r"(\d{2})\s*-\s*(\d{2})\s*-\s*(\d{4})",
+                               lambda match: f"{match.group(1)}-{match.group(2)}-{match.group(3)}", match_raw)
+
+            corrected_line = corrected_line + match_raw
+
+        corrected_line = operator_to_insert + re.sub(r"IIF\(ISNULL\((?P<cond>.+)\), (.+), (?P=cond)\)",
+                                                     convert_iif_isnull_to_nvl,
+                                                     corrected_line)
+        operator_to_insert = ""
+
+        if corrected_line.endswith(" + ;"):
+            corrected_line = corrected_line.replace(" + ;", " ;")
+            operator_to_insert = "+ "
+        if corrected_line.endswith(" - ;"):
+            corrected_line = corrected_line.replace(" - ;", " ;")
+            operator_to_insert = "- "
+        if corrected_line.endswith(" * ;"):
+            corrected_line = corrected_line.replace(" * ;", " ;")
+            operator_to_insert = "* "
+        if corrected_line.endswith(" / ;"):
+            corrected_line = corrected_line.replace(" / ;", " ;")
+            operator_to_insert = "/ "
+        if corrected_line.endswith(" AND ;"):
+            corrected_line = corrected_line.replace(" AND ;", " ;")
+            operator_to_insert = "AND "
+        if corrected_line.endswith(" OR ;"):
+            corrected_line = corrected_line.replace(" OR ;", " ;")
+            operator_to_insert = "OR "
+
+        line_stripped = corrected_line
+        corrected_line = "\t" * indentation_level + corrected_line
+
+        if line_stripped.startswith("IF"):
+            indentation_level += 1
+        if line_stripped.startswith("ELSE"):
+            indentation_level += 1
+        if line_stripped.startswith("SCAN"):
+            indentation_level += 1
+        if line_stripped.startswith("DO CASE"):
+            indentation_level += 2
+        if line_stripped.startswith("CASE"):
+            indentation_level += 1
+        if line_stripped.startswith("OTHER"):
+            indentation_level += 1
+        if line_stripped.startswith("DO WHILE"):
+            indentation_level += 1
+        if line_stripped.startswith("FOR EACH"):
+            indentation_level += 1
+        if line_stripped.endswith(";") and not continuation_line:
+            indentation_level += 1
+            continuation_line = True
+        if not line_stripped.endswith(";") and continuation_line:
+            indentation_level -= 1
+            continuation_line = False
+        if re.search(r"^FOR .+ TO", line_stripped):
+            indentation_level += 1
+        if line_stripped.startswith("TRY"):
+            indentation_level += 1
+        if line_stripped.startswith("CATCH"):
+            indentation_level += 1
+        if line_stripped.startswith("WITH"):
+            indentation_level += 1
+        if line_stripped.startswith("FUNCTION"):
+            indentation_level += 1
+        if line_stripped.startswith("PROCEDURE") and not is_form:
+            indentation_level += 1
+
+        binary_operator_on_two_lines = False
+        if continuation_line and re.search(r"([\w)\]'\"])(?<!WITH)(?<!STEP)(?<!SKIP)\s+;", line_stripped):
+            binary_operator_on_two_lines = True
+
+        if comment_start != -1:
+            corrected_line = corrected_line + " " + comment
+
+        corrected_lines.append(corrected_line)
+
+    return corrected_lines
+
+
+if __name__ == "__main__":
+    app()
