@@ -14,5 +14,5 @@ run:
     - 'refreshenv'
     - 'pyproject-build'
     - '$env:TWINE_PASSWORD = ${CI_JOB_TOKEN}'
-    - '$env:TWINE_USERNAME = gitlab-ci-token'
+    - '$env:TWINE_USERNAME = "gitlab-ci-token"'
     - 'twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi .\dist\*'
