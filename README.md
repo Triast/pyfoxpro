@@ -1,5 +1,8 @@
 # pyfoxpro
 
+[![pipeline status](http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/badges/master/pipeline.svg)](http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/commits/master) 
+[![Latest Release](http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/badges/release.svg)](http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/releases) 
+
 CLI для выполнения различных полезных команд с проектами, написанными на Visual FoxPro.
 
 ## Возможности приложения
