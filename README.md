@@ -51,6 +51,12 @@ pipx install pyfoxpro --index-url http://gitlab.sbyt.gomelenergo.by/api/v4/proje
 pyfoxpro /path/to/file
 ```
 
+Или:
+
+``` bash
+python -m pyfoxpro /path/to/file
+```
+
 Данная команда должна отформатировать файл по пути /path/to/file. Файл должен иметь расширение .scx или .prg.
 
 ## Что нового?
@@ -93,5 +99,5 @@ pipx install build
 * `source ./venv/Scripts/activate`
 * Для компиляции выполните `pyproject-build`
 * Для установки проекта в режиме редактирования выполните `pip install --editable .`
-* Для запуска `pyfoxpro /path/to/file` или `python ./pyfoxpro/main.py /path/to/file`
+* Для запуска `pyfoxpro /path/to/file` или `python -m pyfoxpro /path/to/file` или `python ./pyfoxpro/main.py /path/to/file`
 * Для разработки откройте папку с проектом с помощью предпочитаемой среды разработки. К примеру, с помощью Visual Studio Code команда `code .`
