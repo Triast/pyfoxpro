@@ -1,18 +1,19 @@
-[tool.poetry]
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
 name = "pyfoxpro"
 version = "0.1.0"
 description = "CLI для выполнения различных полезных команд с проектами, написанными на Visual FoxPro."
-authors = ["Ihar Kamarets <i.komarec@sbyt.gomel.energo.net>"]
+authors = [{name = "Ihar Kamarets", email = "i.komarec@sbyt.gomel.energo.net"}]
 readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+dependencies = [
+    "dbf",
+    "typer[all]"
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-dbf = "^0.99.3"
-typer = {extras = ["all"], version = "^0.9.0"}
-
-[tool.poetry.scripts]
+[project.scripts]
 pyfoxpro = "pyfoxpro.main:app"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

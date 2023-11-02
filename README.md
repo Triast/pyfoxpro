@@ -13,10 +13,10 @@ CLI для выполнения различных полезных команд
 
 ### Зависимости
 
-Приложению для работы необходим [Python](https://www.python.org/) версии не ниже 3.11. Python можно установить с помощью [Chocolatey](https://chocolatey.org/):
+Приложению для работы необходим [Python](https://www.python.org/) версии не ниже 3.12. Python можно установить с помощью [Chocolatey](https://chocolatey.org/):
 
 ``` bash
-choco install python311
+choco install python312
 ```
 
 Также для установки приложения рекомендуется использовать [pipx](https://github.com/pypa/pipx). Инструкция с установкой находится в README.md.
@@ -27,10 +27,22 @@ choco install python311
 
 ## Установка
 
+Чтобы избежать проблем с сертификатами при работе с [pypi.org](https://pypi.org/) из внутренней сети Энергосбыта и добавить в доверенные репозитории [GitLab Энергосбыта](http://gitlab.sbyt.gomelenergo.by) можно выполнить следующую команду:
+
+``` bash
+pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org gitlab.sbyt.gomelenergo.by"
+```
+
 Для установки приложения выполните следующую команду:
 
 ``` bash
-pipx install pyfoxpro
+pip install pyfoxpro --user --index-url http://gitlab.sbyt.gomelenergo.by/api/v4/projects/13/packages/pypi/simple
+```
+
+Или с помощью `pipx`:
+
+``` bash
+pipx install pyfoxpro --index-url http://gitlab.sbyt.gomelenergo.by/api/v4/projects/13/packages/pypi/simple
 ```
 
 После выполнения данной команды в консоли появится возможность выполнения следующей команды:
@@ -51,25 +63,35 @@ pyfoxpro /path/to/file
 
 * [git](https://git-scm.com/downloads)
 * [foxbin2prg](https://github.com/fdbozzo/foxbin2prg)
-* [Python](https://www.python.org/) версии не ниже 3.11
-* [Poetry](https://python-poetry.org/)
+* [Python](https://www.python.org/) версии не ниже 3.12
+* [build](https://pypi.org/project/build/)
 
 `git` и `Python` можно установить с помощью [Chocolatey](https://chocolatey.org/) следующими командами:
 
 ``` bash
 choco install git.install
-choco install python311
+choco install python312
+```
+
+`build` можно установить с помощью следующей команды:
+
+``` bash
+pip install --user build
+```
+
+Или с помощью `pipx`:
+
+``` bash
+pipx install build
 ```
 
 Для запуска и разработки выполните следующее:
 
 * В консоли выполните ```git clone http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro.git```
 * `cd ./pyfoxpro`
-* `poetry install`
-* Для запуска `poetry run pyfoxpro /path/to/file` или `poetry run python ./pyfoxpro/main.py /path/to/file`
-* Для разработки откройте папку с проектом с помощью предпочитаемой среды разработки. К примеру, с помощью Visual Studio Code следующие команды:
-
-    ``` bash
-    poetry shell
-    code .
-    ```
+* `python -m venv ./venv/`
+* `source ./venv/Scripts/activate`
+* Для компиляции выполните `pyproject-build`
+* Для установки проекта в режиме редактирования выполните `pip install --editable .`
+* Для запуска `pyfoxpro /path/to/file` или `python ./pyfoxpro/main.py /path/to/file`
+* Для разработки откройте папку с проектом с помощью предпочитаемой среды разработки. К примеру, с помощью Visual Studio Code команда `code .`
