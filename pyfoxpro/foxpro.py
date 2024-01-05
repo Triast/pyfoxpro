@@ -91,6 +91,7 @@ replacement_table = [
     (re.compile(r"\bnocons?o?l?e?\b", flags=re.IGNORECASE), "NOCONSOLE"),
     (re.compile(r"\bpreview?\b", flags=re.IGNORECASE), "PREVIEW"),
     (re.compile(r"\brefresh\b(\s*\(\))?", flags=re.IGNORECASE), "Refresh()"),
+    (re.compile(r"\bvalid\b(\s*\(\))?", flags=re.IGNORECASE), "Valid()"),
     (re.compile(r"\bif\b", flags=re.IGNORECASE), "IF"),
     (re.compile(r"\belse\b", flags=re.IGNORECASE), "ELSE"),
     (re.compile(r"\bendif?\b", flags=re.IGNORECASE), "ENDIF"),
@@ -264,7 +265,8 @@ replacement_table = [
     (re.compile(r"\berror\b", flags=re.IGNORECASE), "ERROR"),
     (re.compile(r"\bmodif?y?\b", flags=re.IGNORECASE), "MODIFY"),
     (re.compile(r"\bnoedit\b", flags=re.IGNORECASE), "NOEDIT"),
-    (re.compile(r"\basc\b\s*\(", flags=re.IGNORECASE), "ASC(")
+    (re.compile(r"\basc\b\s*\(", flags=re.IGNORECASE), "ASC("),
+    (re.compile(r"\bstep\b", flags=re.IGNORECASE), "STEP")
 ]
 
 _dataenvironment_properties_to_remove = [
