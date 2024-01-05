@@ -23,6 +23,8 @@ def beautify(file: str):
                     or file_path.suffix.lower() == ".mn2"
                     or file_path.suffix.lower() == ".vc2"
                     or file_path.suffix.lower() == ".vcx"
+                    or file_path.suffix.lower() == ".fr2"
+                    or file_path.suffix.lower() == ".frx"
                     or file_path.suffix.lower() == ".prg"):
         return
 
@@ -59,6 +61,86 @@ def beautify(file: str):
         finally:
             table.close()
             temp_form_memo.rename(form_memo)
+
+        subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"])
+
+        return
+
+    if file_path.suffix.lower() == ".fr2":
+        file_path = file_path.with_suffix(".frx")
+
+    if file_path.suffix.lower() == ".frx":
+        form_memo = file_path.with_suffix(".frt")
+        temp_form_memo = form_memo.rename(form_memo.with_suffix(".fpt"))
+
+        table = dbf.Table(filename=str(file_path))
+
+        table.open(dbf.READ_WRITE)
+        try:
+            for record in table:
+                if record.name in properties_to_remove:
+                    properties_splited: str = record.expr.splitlines(keepends=True)
+                    clean_properties: List[str] = []
+
+                    for prop in properties_splited:
+                        good_prop = True
+
+                        if "ControlSource" in prop or "DynamicBackColor" in prop or "DynamicForeColor" in prop:
+                            if '= "' in prop:
+                                content_regex = re.compile(r'".*"')
+                            elif "= '" in prop:
+                                content_regex = re.compile(r"'.*'")
+                            else:
+                                content_regex = re.compile(r"\[.*]")
+
+                            search_result = content_regex.search(prop)
+
+                            corrected_prop = beautify_code(search_result.group(0)[1:-1], False)[0]
+
+                            if '"' in corrected_prop and "'" in corrected_prop:
+                                replacement_prop = f"[{corrected_prop}]"
+                            elif '"' in corrected_prop:
+                                replacement_prop = f"'{corrected_prop}'"
+                            else:
+                                replacement_prop = f'"{corrected_prop}"'
+
+                            prop = content_regex.sub(replacement_prop, prop)
+
+                        for prop_to_remove in properties_to_remove[record.name]:
+                            if prop_to_remove.search(prop):
+                                good_prop = False
+                                break
+
+                        if good_prop:
+                            if "= (" in prop:
+                                corrected_prop = beautify_code(re.search(r'\(.*\)', prop).group(0)[1:-1], False)[0]
+                                prop = re.sub(r'\(.*\)', f'({corrected_prop})', prop)
+
+                            clean_properties.append(prop)
+
+                    dbf.write(record, expr="".join(clean_properties))
+                if record.objtype != 1 and record.objtype != 25 and record.objtype != 26 and record.expr:
+                    beatified_code = beautify_code(record.expr, True)
+                    dbf.write(record, expr="\r\n".join(beatified_code))
+                if record.tag:
+                    beatified_code = beautify_code(record.tag, True)
+                    dbf.write(record, tag="\r\n".join(beatified_code))
+                if record.supexpr:
+                    beatified_code = beautify_code(record.supexpr, True)
+                    dbf.write(record, supexpr="\r\n".join(beatified_code))
+        finally:
+            table.close()
+            temp_form_memo.rename(form_memo)
+
+        foxpro_compile_command_file: Path = Path(tempfile.gettempdir() + "\\compile_file.prg")
+        foxpro_compile_command_file_fxp: Path = foxpro_compile_command_file.with_suffix(".fxp")
+        with foxpro_compile_command_file.open(mode="w") as f:
+            f.write(f"COMPILE REPORT {str(file_path)}\nQUIT\n")
+
+        subprocess.run(["vfp9", "-c", str(foxpro_compile_command_file)])
+
+        foxpro_compile_command_file.unlink()
+        foxpro_compile_command_file_fxp.unlink()
 
         subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"])
 
