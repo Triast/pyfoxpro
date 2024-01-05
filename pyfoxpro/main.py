@@ -21,6 +21,8 @@ def beautify(file: str):
                     or file_path.suffix.lower() == ".sc2"
                     or file_path.suffix.lower() == ".mnx"
                     or file_path.suffix.lower() == ".mn2"
+                    or file_path.suffix.lower() == ".vc2"
+                    or file_path.suffix.lower() == ".vcx"
                     or file_path.suffix.lower() == ".prg"):
         return
 
@@ -64,8 +66,16 @@ def beautify(file: str):
 
     if file_path.suffix.lower() == ".sc2":
         file_path = file_path.with_suffix(".scx")
+    if file_path.suffix.lower() == ".vc2":
+        file_path = file_path.with_suffix(".vcx")
 
-    form_memo: Path = file_path.with_suffix(".sct")
+    suffix = ".sct"
+    object_type = "FORM"
+    if file_path.suffix.lower() == ".vcx":
+        suffix = ".vct"
+        object_type = "CLASSLIB"
+
+    form_memo: Path = file_path.with_suffix(suffix)
     temp_form_memo = form_memo.rename(form_memo.with_suffix(".fpt"))
 
     table = dbf.Table(
@@ -128,7 +138,7 @@ def beautify(file: str):
     foxpro_compile_command_file: Path = Path(tempfile.gettempdir() + "\\compile_file.prg")
     foxpro_compile_command_file_fxp: Path = foxpro_compile_command_file.with_suffix(".fxp")
     with foxpro_compile_command_file.open(mode="w") as f:
-        f.write("COMPILE FORM " + str(file_path) + "\nQUIT\n")
+        f.write(f"COMPILE {object_type} {str(file_path)}\nQUIT\n")
 
     subprocess.run(["vfp9", "-c", str(foxpro_compile_command_file)])
 
