@@ -120,13 +120,13 @@ def beautify(file: str):
 
                     dbf.write(record, expr="".join(clean_properties))
                 if record.objtype != 1 and record.objtype != 25 and record.objtype != 26 and record.expr:
-                    beatified_code = beautify_code(record.expr, True)
+                    beatified_code = beautify_code(record.expr, True, True)
                     dbf.write(record, expr="\r\n".join(beatified_code))
                 if record.tag:
                     beatified_code = beautify_code(record.tag, True)
                     dbf.write(record, tag="\r\n".join(beatified_code))
                 if record.supexpr:
-                    beatified_code = beautify_code(record.supexpr, True)
+                    beatified_code = beautify_code(record.supexpr, True, True)
                     dbf.write(record, supexpr="\r\n".join(beatified_code))
         finally:
             table.close()
@@ -234,8 +234,8 @@ def convert_iif_isnull_to_nvl(match) -> str:
     return f"NVL({match.group(1)}, {match.group(2)})"
 
 
-def beautify_code(code: str, is_form: bool) -> List[str]:
-    lines: List[str] = code.split(sep="\r\n")
+def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> List[str]:
+    lines: List[str] = code.split(sep="\r\n") if not is_report_expr else [code]
     corrected_lines: List[str] = []
     indentation_level = 0
 
@@ -306,11 +306,11 @@ def beautify_code(code: str, is_form: bool) -> List[str]:
             comment_match = False
             match_raw = match
 
-            if match_raw.startswith('"'):
+            if not is_report_expr and match_raw.startswith('"'):
                 if match_raw.find("'") == -1:
                     match_raw = match_raw.replace('"', "'")
                 comment_match = True
-            if match.startswith("'"):
+            if match.startswith("'") or match.startswith('"'):
                 comment_match = True
 
             if comment_match:
