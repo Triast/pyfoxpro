@@ -19,6 +19,8 @@ def beautify(file: str):
             or file_path.is_dir() \
             or not (file_path.suffix.lower() == ".scx"
                     or file_path.suffix.lower() == ".sc2"
+                    or file_path.suffix.lower() == ".mnx"
+                    or file_path.suffix.lower() == ".mn2"
                     or file_path.suffix.lower() == ".prg"):
         return
 
@@ -28,6 +30,35 @@ def beautify(file: str):
 
         with file_path.open("w", newline="\r\n") as f:
             f.write("\n".join(beautified_code_lines))
+
+        return
+
+    if file_path.suffix.lower() == ".mn2":
+        file_path = file_path.with_suffix(".mnx")
+
+    if file_path.suffix.lower() == ".mnx":
+        form_memo = file_path.with_suffix(".mnt")
+        temp_form_memo = form_memo.rename(form_memo.with_suffix(".fpt"))
+
+        table = dbf.Table(filename=str(file_path))
+
+        table.open(dbf.READ_WRITE)
+        try:
+            for record in table:
+                if record.command:
+                    beatified_code = beautify_code(record.command, True)
+                    dbf.write(record, command="\r\n".join(beatified_code))
+                if record.procedure:
+                    beatified_code = beautify_code(record.procedure, True)
+                    dbf.write(record, procedure="\r\n".join(beatified_code))
+                if record.skipfor:
+                    beatified_code = beautify_code(record.skipfor, True)
+                    dbf.write(record, skipfor="\r\n".join(beatified_code))
+        finally:
+            table.close()
+            temp_form_memo.rename(form_memo)
+
+        subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"])
 
         return
 
