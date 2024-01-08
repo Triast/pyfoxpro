@@ -313,7 +313,8 @@ replacement_table = [
     (re.compile(r"\bdodefault\b\s*\(", flags=re.IGNORECASE), "DODEFAULT("),
     (re.compile(r"\bgetenv\b\s*\(", flags=re.IGNORECASE), "GETENV("),
     (re.compile(r"\bint\b\s*\(", flags=re.IGNORECASE), "INT("),
-    (re.compile(r"\bbitxor\b\s*\(", flags=re.IGNORECASE), "BITXOR(")
+    (re.compile(r"\bbitxor\b\s*\(", flags=re.IGNORECASE), "BITXOR("),
+    (re.compile(r"\b_pageno\b", flags=re.IGNORECASE), "_PAGENO")
 ]
 
 _dataenvironment_properties_to_remove = [
