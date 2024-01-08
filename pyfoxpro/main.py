@@ -315,7 +315,7 @@ def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> Lis
 
             if comment_match:
                 comment_content = match_raw[1:-1]
-                if comment_content.isspace() and len(comment_content) > 1:
+                if not is_report_expr and comment_content.isspace() and len(comment_content) > 1:
                     match_raw = f"SPACE({len(comment_content)})"
                 corrected_line = corrected_line + match_raw
                 continue
