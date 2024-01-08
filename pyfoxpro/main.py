@@ -126,7 +126,7 @@ def beautify(file: str):
                     beatified_code = beautify_code(record.tag, True)
                     dbf.write(record, tag="\r\n".join(beatified_code))
                 if record.supexpr:
-                    beatified_code = beautify_code(record.supexpr, True, True)
+                    beatified_code = beautify_code(record.supexpr, True)
                     dbf.write(record, supexpr="\r\n".join(beatified_code))
         finally:
             table.close()
