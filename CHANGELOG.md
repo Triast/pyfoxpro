@@ -10,6 +10,23 @@
 ### Добавлено
 
 - Добавлены новые правила для форматирования.
+- Добавлены списки для очистки стандартных свойств для следующих классов:
+  - cmdadd;
+  - cmdbut;
+  - cmdexit;
+  - cmdprint;
+  - ts3dshape;
+  - tsbaseform;
+  - tsbasespform;
+  - tscheckbox;
+  - tscombobox;
+  - tseditbox;
+  - tsgrid;
+  - tslabel;
+  - tslabelv;
+  - tslistbox;
+  - tsoptiongroup;
+  - tstextbox.
 
 ### Исправлено
 
