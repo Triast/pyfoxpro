@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+### Добавлено
+
+- Добавлены новые правила для форматирования.
+
 ### Исправлено
 
 - Добавлено ограничение на поле "expr" в отчётах в 254 символа. Если после форматирования строка получается длинее, то оставляется неформатированный вариант.
@@ -61,6 +65,7 @@
 - Форматирование форм с помощью команды `pyfoxpro /path/to/file.scx`.
 - Форматирование текстовых с помощью команды `pyfoxpro /path/to/file.prg`.
 
+[Unreleased]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.4...master?from_project_id=13&straight=false
 [0.3.4]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.3...v0.3.4?from_project_id=13&straight=false
 [0.3.3]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.2...v0.3.3?from_project_id=13&straight=false
 [0.3.2]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.1...v0.3.2?from_project_id=13&straight=false

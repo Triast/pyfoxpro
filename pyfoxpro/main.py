@@ -291,6 +291,8 @@ def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> Lis
             indentation_level -= 1
         if line_stripped.upper().startswith("ENDPROC") and not is_form:
             indentation_level -= 1
+        if line_stripped.upper().startswith("ENDDEFINE"):
+            indentation_level -= 1
 
         comment_start = line_stripped.find("&&")
         comment = ""
@@ -430,6 +432,8 @@ def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> Lis
         if line_stripped.startswith("FUNCTION"):
             indentation_level += 1
         if line_stripped.startswith("PROCEDURE") and not is_form:
+            indentation_level += 1
+        if line_stripped.startswith("DEFINE"):
             indentation_level += 1
 
         binary_operator_on_two_lines = False
