@@ -439,7 +439,10 @@ def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> Lis
         if comment_start != -1:
             corrected_line = corrected_line + " " + comment
 
-        corrected_lines.append(corrected_line)
+        if is_report_expr and len(corrected_line) > 254:
+            corrected_lines.append(line.strip())
+        else:
+            corrected_lines.append(corrected_line)
 
     return corrected_lines
 
