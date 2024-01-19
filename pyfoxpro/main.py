@@ -167,7 +167,7 @@ def beautify(file: str):
     table.open(dbf.READ_WRITE)
 
     for record in table:
-        if record.baseclass in properties_to_remove:
+        if record["class"] in properties_to_remove:
             properties_splited: str = record.properties.splitlines(keepends=True)
             clean_properties: List[str] = []
 
@@ -195,7 +195,7 @@ def beautify(file: str):
 
                     prop = content_regex.sub(replacement_prop, prop)
 
-                for prop_to_remove in properties_to_remove[record.baseclass]:
+                for prop_to_remove in properties_to_remove[record["class"]]:
                     if prop_to_remove.search(prop):
                         good_prop = False
                         break
