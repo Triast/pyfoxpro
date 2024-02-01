@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyfoxpro"
-version = "0.3.5"
+version = "0.3.6"
 description = "CLI для выполнения различных полезных команд с проектами, написанными на Visual FoxPro."
 authors = [{name = "Ihar Kamarets", email = "i.komarec@sbyt.gomel.energo.net"}]
 readme = "README.md"
