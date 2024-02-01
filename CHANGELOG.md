@@ -5,6 +5,12 @@
 Данный формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 и этот проект следует [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Добавлено
+
+- Добавлены новые правила для форматирования.
+
 ## [0.3.5] - 2024-01-19
 
 ### Добавлено
@@ -83,6 +89,7 @@
 - Форматирование форм с помощью команды `pyfoxpro /path/to/file.scx`.
 - Форматирование текстовых с помощью команды `pyfoxpro /path/to/file.prg`.
 
+[Unreleased]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.5...master?from_project_id=13&straight=false
 [0.3.5]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.4...v0.3.5?from_project_id=13&straight=false
 [0.3.4]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.3...v0.3.4?from_project_id=13&straight=false
 [0.3.3]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.2...v0.3.3?from_project_id=13&straight=false

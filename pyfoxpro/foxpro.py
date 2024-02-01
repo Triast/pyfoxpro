@@ -231,6 +231,7 @@ replacement_table = [
     (re.compile(r"\bdimension\b", flags=re.IGNORECASE), "DIMENSION"),
     (re.compile(r"\bskip\b", flags=re.IGNORECASE), "SKIP"),
     (re.compile(r"\bnext\b", flags=re.IGNORECASE), "NEXT"),
+    (re.compile(r"\bmin\b\s*\(", flags=re.IGNORECASE), "MIN("),
     (re.compile(r"\bmax\b\s*\(", flags=re.IGNORECASE), "MAX("),
     (re.compile(r"\balen\b\s*\(", flags=re.IGNORECASE), "ALEN("),
     (re.compile(r"\bsdf\b", flags=re.IGNORECASE), "SDF"),
@@ -336,7 +337,9 @@ replacement_table = [
     (re.compile(r"\brename\b", flags=re.IGNORECASE), "RENAME"),
     (re.compile(r"\.columncount\b", flags=re.IGNORECASE), ".ColumnCount"),
     (re.compile(r"\.currentcontrol\b", flags=re.IGNORECASE), ".CurrentControl"),
-    (re.compile(r"\.buttons\b\s*\(", flags=re.IGNORECASE), ".Buttons(")
+    (re.compile(r"\.buttons\b\s*\(", flags=re.IGNORECASE), ".Buttons("),
+    (re.compile(r"\brecord\b", flags=re.IGNORECASE), "RECORD"),
+    (re.compile(r"\bnoshow\b", flags=re.IGNORECASE), "NOSHOW")
 ]
 
 _dataenvironment_properties_to_remove = [
