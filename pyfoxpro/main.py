@@ -433,7 +433,7 @@ def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> Lis
             indentation_level += 1
         if line_stripped.startswith("PROCEDURE") and not is_form:
             indentation_level += 1
-        if line_stripped.startswith("DEFINE"):
+        if line_stripped.startswith("DEFINE CLASS"):
             indentation_level += 1
 
         binary_operator_on_two_lines = False
