@@ -3,6 +3,7 @@ import re
 import subprocess
 import tempfile
 import typer
+import shutil
 from pathlib import Path
 from typing import List
 from pyfoxpro.foxpro import replacement_table, properties_to_remove
@@ -12,7 +13,7 @@ app = typer.Typer()
 
 
 @app.command()
-def beautify(file: str):
+def beautify(file: str, vfp6: bool = False):
     file_path = Path(file)
 
     if not file_path.exists() \
@@ -62,7 +63,34 @@ def beautify(file: str):
             table.close()
             temp_form_memo.rename(form_memo)
 
+        if vfp6:
+            file_path_backup = file_path.with_name(file_path.name + "_backup")
+            form_memo_backup = form_memo.with_name(form_memo.name + "_backup")
+
+            shutil.copy2(str(file_path), str(file_path_backup))
+            shutil.copy2(str(form_memo), str(form_memo_backup))
+
+            foxpro_modify_menu_file: Path = Path(tempfile.gettempdir() + "\\modify_menu.prg")
+            foxpro_modify_menu_file_fxp: Path = foxpro_modify_menu_file.with_suffix(".fxp")
+            with foxpro_modify_menu_file.open(mode="w") as f:
+                f.write(f"MODIFY MENU {str(file_path)} NOWAIT\n")
+
+            subprocess.run(["vfp9", "-c", str(foxpro_modify_menu_file)])
+
+            foxpro_modify_menu_file.unlink()
+            foxpro_modify_menu_file_fxp.unlink()
+
         subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"])
+
+        if vfp6:
+            file_path.unlink()
+            form_memo.unlink()
+
+            shutil.copy2(str(file_path_backup), str(file_path))
+            shutil.copy2(str(form_memo_backup), str(form_memo))
+
+            file_path_backup.unlink()
+            form_memo_backup.unlink()
 
         return
 
@@ -122,7 +150,7 @@ def beautify(file: str):
                 if record.objtype != 1 and record.objtype != 25 and record.objtype != 26 and record.expr:
                     beatified_code = beautify_code(record.expr, True, True)
                     dbf.write(record, expr="\r\n".join(beatified_code))
-                if record.tag:
+                if record.objtype != 1 and record.tag:
                     beatified_code = beautify_code(record.tag, True)
                     dbf.write(record, tag="\r\n".join(beatified_code))
                 if record.supexpr:
