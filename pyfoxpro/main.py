@@ -114,7 +114,7 @@ def beautify(file: str):
                         if good_prop:
                             if "= (" in prop:
                                 corrected_prop = beautify_code(re.search(r'\(.*\)', prop).group(0)[1:-1], False)[0]
-                                prop = re.sub(r'\(.*\)', f'({corrected_prop})', prop)
+                                prop = re.sub(r'\(.*\)', f'({corrected_prop.replace("\\", "\\\\")})', prop)
 
                             clean_properties.append(prop)
 
@@ -203,7 +203,7 @@ def beautify(file: str):
                 if good_prop:
                     if "= (" in prop:
                         corrected_prop = beautify_code(re.search(r'\(.*\)', prop).group(0)[1:-1], False)[0]
-                        prop = re.sub(r'\(.*\)', f'({corrected_prop})', prop)
+                        prop = re.sub(r'\(.*\)', f'({corrected_prop.replace("\\", "\\\\")})', prop)
 
                     clean_properties.append(prop)
 
