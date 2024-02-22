@@ -195,7 +195,7 @@ replacement_table = [
     (re.compile(r"\balias\b", flags=re.IGNORECASE), "ALIAS"),
     (re.compile(r"\bbottom\b", flags=re.IGNORECASE), "BOTTOM"),
     (re.compile(r"\bprompt\b", flags=re.IGNORECASE), "PROMPT"),
-    (re.compile(r"\bspace\b\s*\(", flags=re.IGNORECASE), "SPACE("),
+    (re.compile(r"\bspace?\b\s*\(", flags=re.IGNORECASE), "SPACE("),
     (re.compile(r"\botherw?i?s?e?\b", flags=re.IGNORECASE), "OTHERWISE"),
     (re.compile(r"\bchr\b", flags=re.IGNORECASE), "CHR"),
     (re.compile(r"\bproce?d?u?r?e?\b", flags=re.IGNORECASE), "PROCEDURE"),
@@ -339,7 +339,11 @@ replacement_table = [
     (re.compile(r"\.currentcontrol\b", flags=re.IGNORECASE), ".CurrentControl"),
     (re.compile(r"\.buttons\b\s*\(", flags=re.IGNORECASE), ".Buttons("),
     (re.compile(r"\brecord\b", flags=re.IGNORECASE), "RECORD"),
-    (re.compile(r"\bnoshow\b", flags=re.IGNORECASE), "NOSHOW")
+    (re.compile(r"\bnoshow\b", flags=re.IGNORECASE), "NOSHOW"),
+    (re.compile(r"\bisdigit\b\s*\(", flags=re.IGNORECASE), "ISDIGIT("),
+    (re.compile(r"\bisalpha\b\s*\(", flags=re.IGNORECASE), "ISALPHA("),
+    (re.compile(r"\brgb\b\s*\(", flags=re.IGNORECASE), "RGB("),
+    (re.compile(r"\bstuff\b\s*\(", flags=re.IGNORECASE), "STUFF(")
 ]
 
 _dataenvironment_properties_to_remove = [
