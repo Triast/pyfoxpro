@@ -343,6 +343,8 @@ def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> Lis
             match_raw = re.sub(r"^\s*<\s*>\s*", "<> ", match_raw)
             match_raw = re.sub(r"\s*!\s*=\s*", " <> ", match_raw)
             match_raw = re.sub(r"^\s*!\s*=\s*", "<> ", match_raw)
+            match_raw = re.sub(r"\s*#\s*", " <> ", match_raw)
+            match_raw = re.sub(r"^\s*#\s*", "<> ", match_raw)
 
             match_raw = re.sub(r"(?<=[\w)\]'\"])(?<!WITH)(?<!STEP)(?<!SKIP)\s*\+\s*", " + ", match_raw)
             match_raw = re.sub(r"^\s*\+\s*", ("+ " if i == 0 else " + ") if not continuation_line or not (
