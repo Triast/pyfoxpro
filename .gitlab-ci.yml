@@ -1,18 +1,30 @@
-run:
-  only:
-    - tags
+stages:
+  - lint
+  - deploy
+
+lint_job:
+  stage: lint
   script:
-    - 'Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1'
-    - 'python3.12 -m pip install --upgrade pip'
-    - 'python3.12 -m pip install --upgrade --user pipx'
-    - 'python3.12 -m pipx ensurepath'
-    - 'refreshenv'
-    - 'pipx install build'
-    - 'pipx upgrade build'
-    - 'pipx install twine'
-    - 'pipx upgrade twine'
-    - 'refreshenv'
-    - 'pyproject-build'
+    - 'python -m venv .\venv'
+    - '.\venv\Scripts\Activate.ps1'
+    - 'python -m pip install --upgrade pip'
+    - 'pip install -r .\requirements.txt'
+    - 'pip install ruff'
+    - 'ruff check'
+    - 'deactivate'
+
+deploy_job:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - 'python -m venv .\venv'
+    - '.\venv\Scripts\Activate.ps1'
+    - 'python -m pip install --upgrade pip'
+    - 'pip install build twine'
+    - 'python -m build'
     - '$env:TWINE_PASSWORD = ${CI_JOB_TOKEN}'
     - '$env:TWINE_USERNAME = "gitlab-ci-token"'
     - 'twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi .\dist\*'
+    - 'release-cli create --description "./docs/release-latest.md" --tag-name "${CI_COMMIT_TAG}"'
+    - 'deactivate'

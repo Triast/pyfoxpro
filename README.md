@@ -75,14 +75,21 @@ python -m pyfoxpro /path/to/file
 
 * [git](https://git-scm.com/downloads)
 * [foxbin2prg](https://github.com/fdbozzo/foxbin2prg)
-* [Python](https://www.python.org/) версии не ниже 3.12
+* [Python](https://www.python.org/) версии не ниже 3.13
 * [build](https://pypi.org/project/build/)
 
 `git` и `Python` можно установить с помощью [Chocolatey](https://chocolatey.org/) следующими командами:
 
 ``` bash
 choco install git.install
-choco install python312
+choco install python313
+```
+
+Или с помощью [Scoop](https://scoop.sh/):
+
+``` bash
+scoop install main/git
+scoop install main/python
 ```
 
 `build` можно установить с помощью следующей команды:

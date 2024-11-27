@@ -5,6 +5,12 @@
 Данный формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 и этот проект следует [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.9] - 2024-11-27
+
+### Обновлено
+
+- Обновлена версия Python до `3.13.x`.
+
 ## [0.3.8] - 2024-02-23
 
 ### Исправлено
@@ -111,6 +117,7 @@
 - Форматирование форм с помощью команды `pyfoxpro /path/to/file.scx`.
 - Форматирование текстовых с помощью команды `pyfoxpro /path/to/file.prg`.
 
+[0.3.9]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.8...v0.3.9?from_project_id=13&straight=false
 [0.3.8]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.7...v0.3.8?from_project_id=13&straight=false
 [0.3.7]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.6...v0.3.7?from_project_id=13&straight=false
 [0.3.6]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.5...v0.3.6?from_project_id=13&straight=false
