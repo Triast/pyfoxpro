@@ -24,6 +24,6 @@ deploy_job:
     - 'python -m build'
     - '$env:TWINE_PASSWORD = ${CI_JOB_TOKEN}'
     - '$env:TWINE_USERNAME = "gitlab-ci-token"'
-    - 'twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi .\dist\*'
+    - 'twine upload --verbose --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi .\dist\*'
     - 'release-cli create --description "./docs/release-latest.md" --tag-name "${CI_COMMIT_TAG}"'
     - 'deactivate'
