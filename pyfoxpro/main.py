@@ -35,10 +35,10 @@ def fmt(file: str, vfp6: bool = False):
         return
 
     if file_path.suffix.lower() == ".prg":
-        with file_path.open("r", newline="\r\n") as f:
+        with file_path.open("r", newline="\r\n", encoding="cp1251") as f:
             beautified_code_lines = beautify_code(f.read(), False)
 
-        with file_path.open("w", newline="\r\n") as f:
+        with file_path.open("w", newline="\r\n", encoding="cp1251") as f:
             f.write("\n".join(beautified_code_lines))
 
         return
@@ -81,7 +81,7 @@ def fmt(file: str, vfp6: bool = False):
             foxpro_modify_menu_file_fxp: Path = foxpro_modify_menu_file.with_suffix(
                 ".fxp"
             )
-            with foxpro_modify_menu_file.open(mode="w") as f:
+            with foxpro_modify_menu_file.open(mode="w", encoding="cp1251") as f:
                 f.write(f"MODIFY MENU {file_path!s} NOWAIT\n")
 
             subprocess.run(["vfp9", "-c", str(foxpro_modify_menu_file)], check=False)
@@ -192,7 +192,7 @@ def fmt(file: str, vfp6: bool = False):
         foxpro_compile_command_file_fxp: Path = foxpro_compile_command_file.with_suffix(
             ".fxp"
         )
-        with foxpro_compile_command_file.open(mode="w") as f:
+        with foxpro_compile_command_file.open(mode="w", encoding="cp1251") as f:
             f.write(f"COMPILE REPORT {file_path!s}\nQUIT\n")
 
         subprocess.run(["vfp9", "-c", str(foxpro_compile_command_file)], check=False)
@@ -289,7 +289,7 @@ def fmt(file: str, vfp6: bool = False):
     foxpro_compile_command_file_fxp: Path = foxpro_compile_command_file.with_suffix(
         ".fxp"
     )
-    with foxpro_compile_command_file.open(mode="w") as f:
+    with foxpro_compile_command_file.open(mode="w", encoding="cp1251") as f:
         f.write(f"COMPILE {object_type} {file_path!s}\nQUIT\n")
 
     subprocess.run(["vfp9", "-c", str(foxpro_compile_command_file)], check=False)

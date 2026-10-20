@@ -5,6 +5,12 @@
 Данный формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 и этот проект следует [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-10-20
+
+### Исправлено
+
+- Исправлена попытка открытия файлов foxpro в кодировке `utf-8`.
+
 ## [0.4.0] - 2026-10-20
 
 ### Изменено
@@ -131,6 +137,7 @@
 - Форматирование форм с помощью команды `pyfoxpro /path/to/file.scx`.
 - Форматирование текстовых с помощью команды `pyfoxpro /path/to/file.prg`.
 
+[0.4.1]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.4.0...v0.4.1?from_project_id=13&straight=false
 [0.4.0]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.9...v0.4.0?from_project_id=13&straight=false
 [0.3.9]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.8...v0.3.9?from_project_id=13&straight=false
 [0.3.8]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.7...v0.3.8?from_project_id=13&straight=false
