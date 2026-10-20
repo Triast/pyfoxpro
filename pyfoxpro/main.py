@@ -1,13 +1,14 @@
-import dbf
+import os
 import re
+import shutil
 import subprocess
 import tempfile
-import typer
-import shutil
 from pathlib import Path
-from typing import List
-from pyfoxpro.foxpro import replacement_table, properties_to_remove
 
+import dbf
+import typer
+
+from pyfoxpro.foxpro import properties_to_remove, replacement_table
 
 app = typer.Typer()
 
@@ -16,17 +17,21 @@ app = typer.Typer()
 def fmt(file: str, vfp6: bool = False):
     file_path = Path(file)
 
-    if not file_path.exists() \
-            or file_path.is_dir() \
-            or not (file_path.suffix.lower() == ".scx"
-                    or file_path.suffix.lower() == ".sc2"
-                    or file_path.suffix.lower() == ".mnx"
-                    or file_path.suffix.lower() == ".mn2"
-                    or file_path.suffix.lower() == ".vc2"
-                    or file_path.suffix.lower() == ".vcx"
-                    or file_path.suffix.lower() == ".fr2"
-                    or file_path.suffix.lower() == ".frx"
-                    or file_path.suffix.lower() == ".prg"):
+    if (
+        not file_path.exists()
+        or file_path.is_dir()
+        or not (
+            file_path.suffix.lower() == ".scx"
+            or file_path.suffix.lower() == ".sc2"
+            or file_path.suffix.lower() == ".mnx"
+            or file_path.suffix.lower() == ".mn2"
+            or file_path.suffix.lower() == ".vc2"
+            or file_path.suffix.lower() == ".vcx"
+            or file_path.suffix.lower() == ".fr2"
+            or file_path.suffix.lower() == ".frx"
+            or file_path.suffix.lower() == ".prg"
+        )
+    ):
         return
 
     if file_path.suffix.lower() == ".prg":
@@ -70,17 +75,21 @@ def fmt(file: str, vfp6: bool = False):
             shutil.copy2(str(file_path), str(file_path_backup))
             shutil.copy2(str(form_memo), str(form_memo_backup))
 
-            foxpro_modify_menu_file: Path = Path(tempfile.gettempdir() + "\\modify_menu.prg")
-            foxpro_modify_menu_file_fxp: Path = foxpro_modify_menu_file.with_suffix(".fxp")
+            foxpro_modify_menu_file: Path = Path(
+                tempfile.gettempdir() + "\\modify_menu.prg"
+            )
+            foxpro_modify_menu_file_fxp: Path = foxpro_modify_menu_file.with_suffix(
+                ".fxp"
+            )
             with foxpro_modify_menu_file.open(mode="w") as f:
-                f.write(f"MODIFY MENU {str(file_path)} NOWAIT\n")
+                f.write(f"MODIFY MENU {file_path!s} NOWAIT\n")
 
-            subprocess.run(["vfp9", "-c", str(foxpro_modify_menu_file)])
+            subprocess.run(["vfp9", "-c", str(foxpro_modify_menu_file)], check=False)
 
             foxpro_modify_menu_file.unlink()
             foxpro_modify_menu_file_fxp.unlink()
 
-        subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"])
+        subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"], check=False)
 
         if vfp6:
             file_path.unlink()
@@ -108,12 +117,16 @@ def fmt(file: str, vfp6: bool = False):
             for record in table:
                 if record.name in properties_to_remove:
                     properties_splited: str = record.expr.splitlines(keepends=True)
-                    clean_properties: List[str] = []
+                    clean_properties: list[str] = []
 
                     for prop in properties_splited:
                         good_prop = True
 
-                        if "ControlSource" in prop or "DynamicBackColor" in prop or "DynamicForeColor" in prop:
+                        if (
+                            "ControlSource" in prop
+                            or "DynamicBackColor" in prop
+                            or "DynamicForeColor" in prop
+                        ):
                             if '= "' in prop:
                                 content_regex = re.compile(r'".*"')
                             elif "= '" in prop:
@@ -123,7 +136,9 @@ def fmt(file: str, vfp6: bool = False):
 
                             search_result = content_regex.search(prop)
 
-                            corrected_prop = beautify_code(search_result.group(0)[1:-1], False)[0]
+                            corrected_prop = beautify_code(
+                                search_result.group(0)[1:-1], False
+                            )[0]
 
                             if '"' in corrected_prop and "'" in corrected_prop:
                                 replacement_prop = f"[{corrected_prop}]"
@@ -141,13 +156,24 @@ def fmt(file: str, vfp6: bool = False):
 
                         if good_prop:
                             if "= (" in prop:
-                                corrected_prop = beautify_code(re.search(r'\(.*\)', prop).group(0)[1:-1], False)[0]
-                                prop = re.sub(r'\(.*\)', f'({corrected_prop.replace("\\", "\\\\")})', prop)
+                                corrected_prop = beautify_code(
+                                    re.search(r"\(.*\)", prop).group(0)[1:-1], False
+                                )[0]
+                                prop = re.sub(
+                                    r"\(.*\)",
+                                    f'({corrected_prop.replace("\\", "\\\\")})',
+                                    prop,
+                                )
 
                             clean_properties.append(prop)
 
                     dbf.write(record, expr="".join(clean_properties))
-                if record.objtype != 1 and record.objtype != 25 and record.objtype != 26 and record.expr:
+                if (
+                    record.objtype != 1
+                    and record.objtype != 25
+                    and record.objtype != 26
+                    and record.expr
+                ):
                     beatified_code = beautify_code(record.expr, True, True)
                     dbf.write(record, expr="\r\n".join(beatified_code))
                 if record.objtype != 1 and record.tag:
@@ -160,17 +186,21 @@ def fmt(file: str, vfp6: bool = False):
             table.close()
             temp_form_memo.rename(form_memo)
 
-        foxpro_compile_command_file: Path = Path(tempfile.gettempdir() + "\\compile_file.prg")
-        foxpro_compile_command_file_fxp: Path = foxpro_compile_command_file.with_suffix(".fxp")
+        foxpro_compile_command_file: Path = Path(
+            tempfile.gettempdir() + "\\compile_file.prg"
+        )
+        foxpro_compile_command_file_fxp: Path = foxpro_compile_command_file.with_suffix(
+            ".fxp"
+        )
         with foxpro_compile_command_file.open(mode="w") as f:
-            f.write(f"COMPILE REPORT {str(file_path)}\nQUIT\n")
+            f.write(f"COMPILE REPORT {file_path!s}\nQUIT\n")
 
-        subprocess.run(["vfp9", "-c", str(foxpro_compile_command_file)])
+        subprocess.run(["vfp9", "-c", str(foxpro_compile_command_file)], check=False)
 
         foxpro_compile_command_file.unlink()
         foxpro_compile_command_file_fxp.unlink()
 
-        subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"])
+        subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"], check=False)
 
         return
 
@@ -188,21 +218,23 @@ def fmt(file: str, vfp6: bool = False):
     form_memo: Path = file_path.with_suffix(suffix)
     temp_form_memo = form_memo.rename(form_memo.with_suffix(".fpt"))
 
-    table = dbf.Table(
-        filename=str(file_path)
-    )
+    table = dbf.Table(filename=str(file_path))
 
     table.open(dbf.READ_WRITE)
 
     for record in table:
         if record["class"] in properties_to_remove:
             properties_splited: str = record.properties.splitlines(keepends=True)
-            clean_properties: List[str] = []
+            clean_properties: list[str] = []
 
             for prop in properties_splited:
                 good_prop = True
 
-                if "ControlSource" in prop or "DynamicBackColor" in prop or "DynamicForeColor" in prop:
+                if (
+                    "ControlSource" in prop
+                    or "DynamicBackColor" in prop
+                    or "DynamicForeColor" in prop
+                ):
                     if '= "' in prop:
                         content_regex = re.compile(r'".*"')
                     elif "= '" in prop:
@@ -212,7 +244,9 @@ def fmt(file: str, vfp6: bool = False):
 
                     search_result = content_regex.search(prop)
 
-                    corrected_prop = beautify_code(search_result.group(0)[1:-1], False)[0]
+                    corrected_prop = beautify_code(search_result.group(0)[1:-1], False)[
+                        0
+                    ]
 
                     if '"' in corrected_prop and "'" in corrected_prop:
                         replacement_prop = f"[{corrected_prop}]"
@@ -230,8 +264,12 @@ def fmt(file: str, vfp6: bool = False):
 
                 if good_prop:
                     if "= (" in prop:
-                        corrected_prop = beautify_code(re.search(r'\(.*\)', prop).group(0)[1:-1], False)[0]
-                        prop = re.sub(r'\(.*\)', f'({corrected_prop.replace("\\", "\\\\")})', prop)
+                        corrected_prop = beautify_code(
+                            re.search(r"\(.*\)", prop).group(0)[1:-1], False
+                        )[0]
+                        prop = re.sub(
+                            r"\(.*\)", f'({corrected_prop.replace("\\", "\\\\")})', prop
+                        )
 
                     clean_properties.append(prop)
 
@@ -245,17 +283,21 @@ def fmt(file: str, vfp6: bool = False):
 
     temp_form_memo.rename(form_memo)
 
-    foxpro_compile_command_file: Path = Path(tempfile.gettempdir() + "\\compile_file.prg")
-    foxpro_compile_command_file_fxp: Path = foxpro_compile_command_file.with_suffix(".fxp")
+    foxpro_compile_command_file: Path = Path(
+        tempfile.gettempdir() + "\\compile_file.prg"
+    )
+    foxpro_compile_command_file_fxp: Path = foxpro_compile_command_file.with_suffix(
+        ".fxp"
+    )
     with foxpro_compile_command_file.open(mode="w") as f:
-        f.write(f"COMPILE {object_type} {str(file_path)}\nQUIT\n")
+        f.write(f"COMPILE {object_type} {file_path!s}\nQUIT\n")
 
-    subprocess.run(["vfp9", "-c", str(foxpro_compile_command_file)])
+    subprocess.run(["vfp9", "-c", str(foxpro_compile_command_file)], check=False)
 
     foxpro_compile_command_file.unlink()
     foxpro_compile_command_file_fxp.unlink()
 
-    subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"])
+    subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"], check=False)
 
 
 @app.command()
@@ -268,7 +310,9 @@ def deps(file: str, shallow: bool = True):
     print_dependencies(pj2, "", file, 0, shallow)
 
 
-def print_dependencies(pj2: str, prev_file_name: str, file: str, level: int, shallow: bool = True):
+def print_dependencies(
+    pj2: str, prev_file_name: str, file: str, level: int, shallow: bool = True
+):
     if shallow and level > 0:
         return
 
@@ -324,9 +368,11 @@ def print_dependencies(pj2: str, prev_file_name: str, file: str, level: int, sha
                     if not is_loc(line):
                         continue
 
-                    file_match = re.search(fr"\b{file_name}\b", line)
+                    file_match = re.search(rf"\b{file_name}\b", line)
                     if file_match is not None:
-                        file_info["references"].append(f"{file}:{i + 1}:{file_match.start() + 1}")
+                        file_info["references"].append(
+                            f"{file}:{i + 1}:{file_match.start() + 1}"
+                        )
 
     for file_type, file_names in project_files.items():
         header_printed = False
@@ -339,7 +385,9 @@ def print_dependencies(pj2: str, prev_file_name: str, file: str, level: int, sha
                 print("    " * level + f"  - {file_name}")
                 for reference in file_info["references"]:
                     print("    " * level + f"    - {reference}")
-                print_dependencies(pj2, current_file_name, file_info["path"], level + 1, shallow)
+                print_dependencies(
+                    pj2, current_file_name, file_info["path"], level + 1, shallow
+                )
 
 
 def is_loc(line: str):
@@ -350,9 +398,9 @@ def convert_iif_isnull_to_nvl(match) -> str:
     return f"NVL({match.group(1)}, {match.group(2)})"
 
 
-def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> List[str]:
-    lines: List[str] = code.split(sep="\r\n") if not is_report_expr else [code]
-    corrected_lines: List[str] = []
+def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> list[str]:
+    lines: list[str] = code.split(sep="\r\n") if not is_report_expr else [code]
+    corrected_lines: list[str] = []
     indentation_level = 0
 
     operator_to_insert = ""
@@ -416,8 +464,13 @@ def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> Lis
             comment = re.sub(r"&&\s*", "&& ", line_stripped[comment_start:])
             line_stripped = line_stripped[:comment_start].rstrip()
 
-        matches = [match for match in re.split(r"('[^']*')|('[^']*$)|(\"[^\"]*\")|(\"[^\"]*$)", line_stripped)
-                   if match is not None]
+        matches = [
+            match
+            for match in re.split(
+                r"('[^']*')|('[^']*$)|(\"[^\"]*\")|(\"[^\"]*$)", line_stripped
+            )
+            if match is not None
+        ]
 
         corrected_line = ""
         for i, match in enumerate(matches):
@@ -428,12 +481,16 @@ def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> Lis
                 if match_raw.find("'") == -1:
                     match_raw = match_raw.replace('"', "'")
                 comment_match = True
-            if match.startswith("'") or match.startswith('"'):
+            if match.startswith(("'", '"')):
                 comment_match = True
 
             if comment_match:
                 comment_content = match_raw[1:-1]
-                if not is_report_expr and comment_content.isspace() and len(comment_content) > 1:
+                if (
+                    not is_report_expr
+                    and comment_content.isspace()
+                    and len(comment_content) > 1
+                ):
                     match_raw = f"SPACE({len(comment_content)})"
                 corrected_line = corrected_line + match_raw
                 continue
@@ -462,37 +519,79 @@ def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> Lis
             match_raw = re.sub(r"\s*#\s*", " <> ", match_raw)
             match_raw = re.sub(r"^\s*#\s*", "<> ", match_raw)
 
-            match_raw = re.sub(r"(?<=[\w)\]'\"])(?<!WITH)(?<!STEP)(?<!SKIP)\s*\+\s*", " + ", match_raw)
-            match_raw = re.sub(r"^\s*\+\s*", ("+ " if i == 0 else " + ") if not continuation_line or not (
-                        not binary_operator_on_two_lines and i == 0) else "+", match_raw)
-            match_raw = re.sub(r"(?<=[\w)\]'\"])(?<!WITH)(?<!STEP)(?<!SKIP)\s*-\s*", " - ", match_raw)
-            match_raw = re.sub(r"^\s*-\s*", ("- " if i == 0 else " - ") if not continuation_line or not (
-                        not binary_operator_on_two_lines and i == 0) else "-", match_raw)
+            match_raw = re.sub(
+                r"(?<=[\w)\]'\"])(?<!WITH)(?<!STEP)(?<!SKIP)\s*\+\s*", " + ", match_raw
+            )
+            match_raw = re.sub(
+                r"^\s*\+\s*",
+                ("+ " if i == 0 else " + ")
+                if not continuation_line
+                or not (not binary_operator_on_two_lines and i == 0)
+                else "+",
+                match_raw,
+            )
+            match_raw = re.sub(
+                r"(?<=[\w)\]'\"])(?<!WITH)(?<!STEP)(?<!SKIP)\s*-\s*", " - ", match_raw
+            )
+            match_raw = re.sub(
+                r"^\s*-\s*",
+                ("- " if i == 0 else " - ")
+                if not continuation_line
+                or not (not binary_operator_on_two_lines and i == 0)
+                else "-",
+                match_raw,
+            )
             if "LIKE" not in match_raw:
                 match_raw = re.sub(r"\s*\*\s*", " * ", match_raw)
-                match_raw = re.sub(r"^\s*\*\s*", ("* " if i == 0 else " * ") if not continuation_line or not (
-                            not binary_operator_on_two_lines and i == 0) else "*", match_raw)
+                match_raw = re.sub(
+                    r"^\s*\*\s*",
+                    ("* " if i == 0 else " * ")
+                    if not continuation_line
+                    or not (not binary_operator_on_two_lines and i == 0)
+                    else "*",
+                    match_raw,
+                )
                 match_raw = re.sub(r"\s*\*\s*\*\s*", " ** ", match_raw)
-                match_raw = re.sub(r"^\s*\*\s*\*\s*", ("** " if i == 0 else " ** ") if not continuation_line or not (
-                            not binary_operator_on_two_lines and i == 0) else "**", match_raw)
+                match_raw = re.sub(
+                    r"^\s*\*\s*\*\s*",
+                    ("** " if i == 0 else " ** ")
+                    if not continuation_line
+                    or not (not binary_operator_on_two_lines and i == 0)
+                    else "**",
+                    match_raw,
+                )
             match_raw = re.sub(r"\s*/\s*", " / ", match_raw)
-            match_raw = re.sub(r"^\s*/\s*", ("/ " if i == 0 else " / ") if not continuation_line or not (
-                        not binary_operator_on_two_lines and i == 0) else "/", match_raw)
+            match_raw = re.sub(
+                r"^\s*/\s*",
+                ("/ " if i == 0 else " / ")
+                if not continuation_line
+                or not (not binary_operator_on_two_lines and i == 0)
+                else "/",
+                match_raw,
+            )
             match_raw = re.sub(r"\s*,\s*", ", ", match_raw)
             match_raw = re.sub(r"\s*;", " ;", match_raw)
             match_raw = re.sub(r"\(\s+", "(", match_raw)
             match_raw = re.sub(r"\s+\)", ")", match_raw)
             match_raw = re.sub(r"\s+", " ", match_raw)
-            match_raw = re.sub(r"(\d{4})\s*-\s*(\d{2})\s*-\s*(\d{2})",
-                               lambda match: f"{match.group(1)}-{match.group(2)}-{match.group(3)}", match_raw)
-            match_raw = re.sub(r"(\d{2})\s*-\s*(\d{2})\s*-\s*(\d{4})",
-                               lambda match: f"{match.group(1)}-{match.group(2)}-{match.group(3)}", match_raw)
+            match_raw = re.sub(
+                r"(\d{4})\s*-\s*(\d{2})\s*-\s*(\d{2})",
+                lambda match: f"{match.group(1)}-{match.group(2)}-{match.group(3)}",
+                match_raw,
+            )
+            match_raw = re.sub(
+                r"(\d{2})\s*-\s*(\d{2})\s*-\s*(\d{4})",
+                lambda match: f"{match.group(1)}-{match.group(2)}-{match.group(3)}",
+                match_raw,
+            )
 
             corrected_line = corrected_line + match_raw
 
-        corrected_line = operator_to_insert + re.sub(r"IIF\(ISNULL\((?P<cond>.+)\), (.+), (?P=cond)\)",
-                                                     convert_iif_isnull_to_nvl,
-                                                     corrected_line)
+        corrected_line = operator_to_insert + re.sub(
+            r"IIF\(ISNULL\((?P<cond>.+)\), (.+), (?P=cond)\)",
+            convert_iif_isnull_to_nvl,
+            corrected_line,
+        )
         operator_to_insert = ""
 
         if corrected_line.endswith(" + ;"):
@@ -555,7 +654,9 @@ def beautify_code(code: str, is_form: bool, is_report_expr: bool = False) -> Lis
             indentation_level += 1
 
         binary_operator_on_two_lines = False
-        if continuation_line and re.search(r"([\w)\]'\"])(?<!WITH)(?<!STEP)(?<!SKIP)\s+;", line_stripped):
+        if continuation_line and re.search(
+            r"([\w)\]'\"])(?<!WITH)(?<!STEP)(?<!SKIP)\s+;", line_stripped
+        ):
             binary_operator_on_two_lines = True
 
         if comment_start != -1:

@@ -346,7 +346,7 @@ replacement_table = [
     (re.compile(r"\bisdigit\b\s*\(", flags=re.IGNORECASE), "ISDIGIT("),
     (re.compile(r"\bisalpha\b\s*\(", flags=re.IGNORECASE), "ISALPHA("),
     (re.compile(r"\brgb\b\s*\(", flags=re.IGNORECASE), "RGB("),
-    (re.compile(r"\bstuff\b\s*\(", flags=re.IGNORECASE), "STUFF(")
+    (re.compile(r"\bstuff\b\s*\(", flags=re.IGNORECASE), "STUFF("),
 ]
 
 _dataenvironment_properties_to_remove = [
@@ -356,7 +356,7 @@ _dataenvironment_properties_to_remove = [
     re.compile(r'\bDataSourceType = ""\r\n'),
     re.compile(r'\bInitialSelectedAlias = ""\r\n'),
     re.compile(r"\bOpenViews = 0\r\n"),
-    re.compile(r'\bTag = ""\r\n')
+    re.compile(r'\bTag = ""\r\n'),
 ]
 
 _cursor_properties_to_remove = [
@@ -367,7 +367,7 @@ _cursor_properties_to_remove = [
     re.compile(r'\bOrder = ""\r\n'),
     re.compile(r"\bOrderDirection = 0\r\n"),
     re.compile(r"\bReadOnly = .F.\r\n"),
-    re.compile(r'\bTag = ""\r\n')
+    re.compile(r'\bTag = ""\r\n'),
 ]
 
 _form_properties_to_remove = [
@@ -448,7 +448,7 @@ _form_properties_to_remove = [
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
     re.compile(r"\bWindowState = 0\r\n"),
     re.compile(r"\bWindowType = 0\r\n"),
-    re.compile(r"\bZoomBox = .F.\r\n")
+    re.compile(r"\bZoomBox = .F.\r\n"),
 ]
 
 _tsbaseform_properties_to_remove = [
@@ -531,7 +531,7 @@ _tsbaseform_properties_to_remove = [
     re.compile(r"\bWindowType = 0\r\n"),
     re.compile(r"\bZoomBox = .F.\r\n"),
     re.compile(r"\bBackColor = 236,233,216\r\n"),
-    re.compile(r'\bCaption = "Form"\r\n')
+    re.compile(r'\bCaption = "Form"\r\n'),
 ]
 
 _tsbasespform_properties_to_remove = [
@@ -614,7 +614,7 @@ _tsbasespform_properties_to_remove = [
     re.compile(r"\bWindowType = 1\r\n"),
     re.compile(r"\bZoomBox = .F.\r\n"),
     re.compile(r"\bBackColor = 212,208,200\r\n"),
-    re.compile(r'\bCaption = "Справочник"\r\n')
+    re.compile(r'\bCaption = "Справочник"\r\n'),
 ]
 
 _label_properties_to_remove = [
@@ -654,7 +654,7 @@ _label_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bWordWrap = .F.\r\n")
+    re.compile(r"\bWordWrap = .F.\r\n"),
 ]
 
 _tslabel_properties_to_remove = [
@@ -694,7 +694,7 @@ _tslabel_properties_to_remove = [
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
     re.compile(r"\bWordWrap = .F.\r\n"),
-    re.compile(r'\bCaption = "Label1"\r\n')
+    re.compile(r'\bCaption = "Label1"\r\n'),
 ]
 
 _tslabelv_properties_to_remove = [
@@ -735,7 +735,7 @@ _tslabelv_properties_to_remove = [
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
     re.compile(r"\bWordWrap = .F.\r\n"),
-    re.compile(r'\bCaption = "Label1"\r\n')
+    re.compile(r'\bCaption = "Label1"\r\n'),
 ]
 
 _textbox_properties_to_remove = [
@@ -800,7 +800,7 @@ _textbox_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bValue = \r\n"),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _tstextbox_properties_to_remove = [
@@ -869,7 +869,7 @@ _tstextbox_properties_to_remove = [
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
     re.compile(r"\bDisabledBackColor = 192,192,192\r\n"),
     re.compile(r"\bDisabledForeColor = 128,128,128\r\n"),
-    re.compile(r"\bSelectedForeColor = 255,255,255\r\n")
+    re.compile(r"\bSelectedForeColor = 255,255,255\r\n"),
 ]
 
 _editbox_properties_to_remove = [
@@ -925,7 +925,7 @@ _editbox_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bValue = \r\n"),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _tseditbox_properties_to_remove = [
@@ -985,7 +985,7 @@ _tseditbox_properties_to_remove = [
     re.compile(r"\bDisabledBackColor = 192,192,192\r\n"),
     re.compile(r"\bDisabledForeColor = 128,128,128\r\n"),
     re.compile(r"\bSelectedBackColor = 192,192,192\r\n"),
-    re.compile(r"\bSelectedForeColor = 128,128,128\r\n")
+    re.compile(r"\bSelectedForeColor = 128,128,128\r\n"),
 ]
 
 _commandbutton_properties_to_remove = [
@@ -1034,7 +1034,7 @@ _commandbutton_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bWordWrap = .F.\r\n")
+    re.compile(r"\bWordWrap = .F.\r\n"),
 ]
 
 _cmdadd_properties_to_remove = [
@@ -1084,7 +1084,7 @@ _cmdadd_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bWordWrap = .F.\r\n")
+    re.compile(r"\bWordWrap = .F.\r\n"),
 ]
 
 _cmdbut_properties_to_remove = [
@@ -1135,7 +1135,7 @@ _cmdbut_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bWordWrap = .F.\r\n")
+    re.compile(r"\bWordWrap = .F.\r\n"),
 ]
 
 _cmdexit_properties_to_remove = [
@@ -1185,7 +1185,7 @@ _cmdexit_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bWordWrap = .F.\r\n")
+    re.compile(r"\bWordWrap = .F.\r\n"),
 ]
 
 _cmdprint_properties_to_remove = [
@@ -1235,7 +1235,7 @@ _cmdprint_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bWordWrap = .F.\r\n")
+    re.compile(r"\bWordWrap = .F.\r\n"),
 ]
 
 _commandgroup_properties_to_remove = [
@@ -1287,7 +1287,7 @@ _commandgroup_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bWordWrap = .F.\r\n")
+    re.compile(r"\bWordWrap = .F.\r\n"),
 ]
 
 _optiongroup_properties_to_remove = [
@@ -1337,7 +1337,7 @@ _optiongroup_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bWordWrap = .F.\r\n")
+    re.compile(r"\bWordWrap = .F.\r\n"),
 ]
 
 _tsoptiongroup_properties_to_remove = [
@@ -1387,7 +1387,7 @@ _tsoptiongroup_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bWordWrap = .F.\r\n")
+    re.compile(r"\bWordWrap = .F.\r\n"),
 ]
 
 _checkbox_properties_to_remove = [
@@ -1438,7 +1438,7 @@ _checkbox_properties_to_remove = [
     re.compile(r"\bValue = 0\r\n"),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bWordWrap = .F.\r\n")
+    re.compile(r"\bWordWrap = .F.\r\n"),
 ]
 
 _tscheckbox_properties_to_remove = [
@@ -1490,7 +1490,7 @@ _tscheckbox_properties_to_remove = [
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
     re.compile(r"\bWordWrap = .F.\r\n"),
-    re.compile(r'\bCaption = "Check1"\r\n')
+    re.compile(r'\bCaption = "Check1"\r\n'),
 ]
 
 _combobox_properties_to_remove = [
@@ -1558,7 +1558,7 @@ _combobox_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bValue = \r\n"),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _tscombobox_properties_to_remove = [
@@ -1627,7 +1627,7 @@ _tscombobox_properties_to_remove = [
     re.compile(r"\bValue = \r\n"),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bDisabledBackColor = 192,192,192\r\n")
+    re.compile(r"\bDisabledBackColor = 192,192,192\r\n"),
 ]
 
 _listbox_properties_to_remove = [
@@ -1685,7 +1685,7 @@ _listbox_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bValue = \r\n"),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _tslistbox_properties_to_remove = [
@@ -1744,7 +1744,7 @@ _tslistbox_properties_to_remove = [
     re.compile(r"\bValue = \r\n"),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bDisabledBackColor = 192,192,192\r\n")
+    re.compile(r"\bDisabledBackColor = 192,192,192\r\n"),
 ]
 
 _spinner_properties_to_remove = [
@@ -1799,7 +1799,7 @@ _spinner_properties_to_remove = [
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bValue = 0\r\n"),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _grid_properties_to_remove = [
@@ -1886,7 +1886,7 @@ _grid_properties_to_remove = [
     re.compile(r"\bValue = 0\r\n"),
     re.compile(r"\bView = 0\r\n"),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _tsgrid_properties_to_remove = [
@@ -1974,7 +1974,7 @@ _tsgrid_properties_to_remove = [
     re.compile(r"\bView = 0\r\n"),
     re.compile(r"\bVisible = .T.\r\n"),
     re.compile(r"\bWhatsThisHelpID = -1\r\n"),
-    re.compile(r"\bBackColor = 255,255,255\r\n")
+    re.compile(r"\bBackColor = 255,255,255\r\n"),
 ]
 
 _header_properties_to_remove = [
@@ -1996,7 +1996,7 @@ _header_properties_to_remove = [
     re.compile(r'\bStatusBarText = ""\r\n'),
     re.compile(r'\bTag = ""\r\n'),
     re.compile(r'\bToolTipText = ""\r\n'),
-    re.compile(r"\bWordWrap = .F.\r\n")
+    re.compile(r"\bWordWrap = .F.\r\n"),
 ]
 
 _image_properties_to_remove = [
@@ -2024,14 +2024,14 @@ _image_properties_to_remove = [
     re.compile(r"\bThemes = .T.\r\n"),
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _timer_properties_to_remove = [
     re.compile(r'\bComment = ""\r\n'),
     re.compile(r"\bEnabled = .T.\r\n"),
     re.compile(r"\bInterval = 0\r\n"),
-    re.compile(r'\bTag = ""\r\n')
+    re.compile(r'\bTag = ""\r\n'),
 ]
 
 _pageframe_properties_to_remove = [
@@ -2075,7 +2075,7 @@ _pageframe_properties_to_remove = [
     re.compile(r"\bThemes = .T.\r\n"),
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _line_properties_to_remove = [
@@ -2102,7 +2102,7 @@ _line_properties_to_remove = [
     re.compile(r'\bTag = ""\r\n'),
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _shape_properties_to_remove = [
@@ -2134,7 +2134,7 @@ _shape_properties_to_remove = [
     re.compile(r'\bTag = ""\r\n'),
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _ts3dshape_properties_to_remove = [
@@ -2166,7 +2166,7 @@ _ts3dshape_properties_to_remove = [
     re.compile(r'\bTag = ""\r\n'),
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _container_properties_to_remove = [
@@ -2194,12 +2194,12 @@ _container_properties_to_remove = [
     re.compile(r'\bTag = ""\r\n'),
     re.compile(r'\bToolTipText = ""\r\n'),
     re.compile(r"\bVisible = .T.\r\n"),
-    re.compile(r"\bWhatsThisHelpID = -1\r\n")
+    re.compile(r"\bWhatsThisHelpID = -1\r\n"),
 ]
 
 _hyperlink_properties_to_remove = [
     re.compile(r'\bComment = ""\r\n'),
-    re.compile(r'\bTag = ""\r\n')
+    re.compile(r'\bTag = ""\r\n'),
 ]
 
 properties_to_remove = {
@@ -2240,5 +2240,5 @@ properties_to_remove = {
     "shape": _shape_properties_to_remove,
     "ts3dshape": _ts3dshape_properties_to_remove,
     "container": _container_properties_to_remove,
-    "hyperlink": _hyperlink_properties_to_remove
+    "hyperlink": _hyperlink_properties_to_remove,
 }

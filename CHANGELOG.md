@@ -5,7 +5,7 @@
 Данный формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 и этот проект следует [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.0] - 2026-10-20
 
 ### Изменено
 
@@ -14,6 +14,10 @@
 ### Добавлено
 
 - Добавлена команда `pyfoxpro deps path_to_file`, по выполнению которой будет выведен список зависимостей с местами их вызова. Список файлов для проверки берётся из файла `*.pj2` в текущей рабочей папке.
+
+### Обновлено
+
+- Обновлена версия Python до `3.15.x`.
 
 ## [0.3.9] - 2024-11-27
 
@@ -127,7 +131,7 @@
 - Форматирование форм с помощью команды `pyfoxpro /path/to/file.scx`.
 - Форматирование текстовых с помощью команды `pyfoxpro /path/to/file.prg`.
 
-[Unreleased]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.9...master?from_project_id=13&straight=false
+[0.4.0]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.9...v0.4.0?from_project_id=13&straight=false
 [0.3.9]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.8...v0.3.9?from_project_id=13&straight=false
 [0.3.8]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.7...v0.3.8?from_project_id=13&straight=false
 [0.3.7]: http://gitlab.sbyt.gomelenergo.by/i.kamarets/pyfoxpro/-/compare/v0.3.6...v0.3.7?from_project_id=13&straight=false

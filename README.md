@@ -19,10 +19,16 @@ CLI для выполнения различных полезных команд
 
 ### Зависимости
 
-Приложению для работы необходим [Python](https://www.python.org/) версии не ниже 3.12. Python можно установить с помощью [Chocolatey](https://chocolatey.org/):
+Приложению для работы необходим [Python](https://www.python.org/) версии не ниже 3.15. Python можно установить с помощью [Chocolatey](https://chocolatey.org/):
 
 ``` bash
-choco install python312
+choco install python315
+```
+
+Или с помощью [Scoop](https://scoop.sh/):
+
+``` bash
+scoop install main/python
 ```
 
 Также для установки приложения рекомендуется использовать [pipx](https://github.com/pypa/pipx). Инструкция с установкой находится в README.md.
@@ -75,14 +81,14 @@ python -m pyfoxpro /path/to/file
 
 * [git](https://git-scm.com/downloads)
 * [foxbin2prg](https://github.com/fdbozzo/foxbin2prg)
-* [Python](https://www.python.org/) версии не ниже 3.13
+* [Python](https://www.python.org/) версии не ниже 3.15
 * [build](https://pypi.org/project/build/)
 
 `git` и `Python` можно установить с помощью [Chocolatey](https://chocolatey.org/) следующими командами:
 
 ``` bash
 choco install git.install
-choco install python313
+choco install python315
 ```
 
 Или с помощью [Scoop](https://scoop.sh/):
@@ -110,6 +116,7 @@ pipx install build
 * `cd ./pyfoxpro`
 * `python -m venv ./venv/`
 * `source ./venv/Scripts/activate`
+* `pip install build`
 * Для компиляции выполните `pyproject-build`
 * Для установки проекта в режиме редактирования выполните `pip install --editable .`
 * Для запуска `pyfoxpro /path/to/file` или `python -m pyfoxpro /path/to/file` или `python ./pyfoxpro/main.py /path/to/file`
