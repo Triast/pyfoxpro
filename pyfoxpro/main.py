@@ -13,7 +13,7 @@ app = typer.Typer()
 
 
 @app.command()
-def beautify(file: str, vfp6: bool = False):
+def fmt(file: str, vfp6: bool = False):
     file_path = Path(file)
 
     if not file_path.exists() \
@@ -256,6 +256,94 @@ def beautify(file: str, vfp6: bool = False):
     foxpro_compile_command_file_fxp.unlink()
 
     subprocess.run(["foxbin2prg", str(file_path), "BIN2PRG"])
+
+
+@app.command()
+def deps(file: str, shallow: bool = True):
+    pj2 = ""
+    for path in Path(f"{os.getcwd()}").glob("*.pj2"):
+        pj2 = path
+        break
+
+    print_dependencies(pj2, "", file, 0, shallow)
+
+
+def print_dependencies(pj2: str, prev_file_name: str, file: str, level: int, shallow: bool = True):
+    if shallow and level > 0:
+        return
+
+    if level > 5:
+        return
+
+    project_file_re = re.compile(r"\.ADD\('(.+)'\)")
+    file_name = Path(file).stem
+
+    project_files: dict[str, dict[str, dict[str, str | list[str]]]] = {}
+
+    with open(pj2, encoding="cp1251") as f:
+        lines = f.readlines()
+        for line in lines:
+            file_match = project_file_re.search(line)
+            if file_match is not None:
+                file_path = Path(file_match.group(1))
+
+                if file_path.stem == file_name:
+                    continue
+
+                file_extension = file_path.suffix
+                if file_extension == ".scx":
+                    file_type = "Forms"
+                    foxbin2prg_extension = ".sc2"
+                elif file_extension == ".frx":
+                    file_type = "Reports"
+                    foxbin2prg_extension = ".fr2"
+                elif file_extension == ".prg":
+                    file_type = "Code"
+                    foxbin2prg_extension = ".prg"
+                else:
+                    continue
+
+                if file_type not in project_files:
+                    project_files[file_type] = {}
+                project_files[file_type][file_path.stem] = {
+                    "path": str(file_path.with_suffix(foxbin2prg_extension)),
+                    "references": [],
+                }
+
+    current_file_name = Path(file).stem
+
+    with open(file, encoding="cp1251") as f:
+        lines = f.readlines()
+
+        for file_type, file_names in project_files.items():
+            for file_name, file_info in file_names.items():
+                if file_name == prev_file_name:
+                    continue
+
+                for i, line in enumerate(lines):
+                    if not is_loc(line):
+                        continue
+
+                    file_match = re.search(fr"\b{file_name}\b", line)
+                    if file_match is not None:
+                        file_info["references"].append(f"{file}:{i + 1}:{file_match.start() + 1}")
+
+    for file_type, file_names in project_files.items():
+        header_printed = False
+
+        for file_name, file_info in file_names.items():
+            if len(file_info["references"]) > 0:
+                if not header_printed:
+                    print("    " * level + f"{file_type}:")
+                    header_printed = True
+                print("    " * level + f"  - {file_name}")
+                for reference in file_info["references"]:
+                    print("    " * level + f"    - {reference}")
+                print_dependencies(pj2, current_file_name, file_info["path"], level + 1, shallow)
+
+
+def is_loc(line: str):
+    return not (line == "" or line.isspace() or re.search(r"^(\s*)(\*|&&)", line))
 
 
 def convert_iif_isnull_to_nvl(match) -> str:
